@@ -15,6 +15,20 @@ class _SplashScreenState extends State<SplashScreen> {
     _checkLoginStatus();
   }
 
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     backgroundColor: Colors.white,
+  //     body: Center(
+  //       child: Image.asset(
+  //         'assets/splash.png',
+  //         width: 200,
+  //         height: 200,
+  //       ),
+  //     ),
+  //   );
+  // }
+
   Future<void> _checkLoginStatus() async {
     final token = await StorageService.read('token');
     final isAdminString = await StorageService.read('isAdmin');

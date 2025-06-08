@@ -5,6 +5,7 @@ import 'screens/splash_screen.dart';
 import 'screens/user_home_screen.dart';
 import 'screens/admin_leave_list_screen.dart';
 import 'screens/adduser_screen.dart';
+import 'screens/admin_calendar_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Paid Leave App',
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: ThemeData(primarySwatch: Colors.grey),
       initialRoute: '/',
       routes: {
         '/': (context) => const SplashScreen(),
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
         '/user': (context) => const UserHomeScreen(),
         '/admin/leave-requests': (context) => const AdminLeaveListScreen(),
         '/admin/add-user': (context) => const AddUserScreen(),
+        '/admin/calendar': (context) => const AdminCalendarScreen(),
       },
     );
   }

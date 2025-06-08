@@ -42,10 +42,8 @@ class _LoginScreenState extends State<LoginScreen> {
         isAdmin ? '/admin' : '/user',
       );
     } else {
-      if (!isValid) {
-        await StorageService.delete('token');
-        await StorageService.delete('isAdmin');
-      }
+      await StorageService.delete('token');
+      await StorageService.delete('isAdmin');
       setState(() {
         isLoading = false;
       });
@@ -57,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final password = _passwordController.text;
 
     if (username.isEmpty || password.isEmpty) {
-      _showErrorDialog("아이디와 비밀번호를 모두 입력하세요.");
+      _showErrorDialog("ユーザーIDとパスワードをすべて入力してください。");
       return;
     }
 
@@ -69,16 +67,13 @@ class _LoginScreenState extends State<LoginScreen> {
       await StorageService.write('token', token);
       await StorageService.write('isAdmin', isAdmin.toString());
 
-
       if (isAdmin) {
         Navigator.pushReplacementNamed(context, '/admin');
       } else {
         Navigator.pushReplacementNamed(context, '/user');
       }
-    } catch (e, stacktrace) {
-      print('LOGIN FAILED: $e');
-      print(stacktrace);
-      _showErrorDialog("아이디 또는 비밀번호가 잘못되었습니다.");
+    } catch (e) {
+      _showErrorDialog("ユーザーIDまたはパスワードが正しくありません。");
     }
   }
 
@@ -86,55 +81,112 @@ class _LoginScreenState extends State<LoginScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("로그인 실패"),
+        title: const Text("ログインに失敗しました。"),
         content: Text(message),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text("확인"),
+            child: const Text("確認"),
           ),
         ],
       ),
     );
   }
 
+  Widget _buildShadowInput({required TextEditingController controller, required String labelText, bool obscure = false, void Function(String)? onSubmitted}) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 8,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: TextField(
+        controller: controller,
+        obscureText: obscure,
+        decoration: InputDecoration(
+          labelText: labelText,
+          labelStyle: const TextStyle(color: Colors.grey),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        ),
+        autofillHints: obscure ? [AutofillHints.password] : [AutofillHints.username],
+        textInputAction: obscure ? TextInputAction.done : TextInputAction.next,
+        onSubmitted: onSubmitted,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("LOGIN"),
-      ),
+      backgroundColor: Colors.grey.shade100,
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _usernameController,
-              decoration: const InputDecoration(labelText: 'Username'),
-              textInputAction: TextInputAction.next,
-              onSubmitted: (_) => FocusScope.of(context).nextFocus(),
-              autofillHints: const [AutofillHints.username],
-            ),
+          : Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.lock_outline, size: 64, color: Colors.grey.shade700),
+              const SizedBox(height: 16),
+              Text(
+                "ログイン",
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey.shade800,
+                ),
+              ),
+              const SizedBox(height: 32),
 
-            TextField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: const InputDecoration(labelText: 'Password'),
-              textInputAction: TextInputAction.done,
-              onSubmitted: (_) => _handleLogin(),
-              keyboardType: TextInputType.visiblePassword,
-              autofillHints: const [AutofillHints.password],
-            ),
-            const SizedBox(height: 32),
-            ElevatedButton(
-              onPressed: _handleLogin,
-              child: const Text("Log in"),
-            ),
-          ],
+              _buildShadowInput(
+                controller: _usernameController,
+                labelText: "ユーザーID",
+              ),
+
+              _buildShadowInput(
+                controller: _passwordController,
+                labelText: "パスワード",
+                obscure: true,
+                onSubmitted: (_) => _handleLogin(),
+              ),
+
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 6,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: ElevatedButton(
+                  onPressed: _handleLogin,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey.shade800,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    "ログイン",
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

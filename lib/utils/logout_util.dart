@@ -5,16 +5,16 @@ Future<void> logout(BuildContext context) async {
   final confirmed = await showDialog<bool>(
     context: context,
     builder: (context) => AlertDialog(
-      title: const Text('로그아웃'),
-      content: const Text('정말 로그아웃하시겠습니까?'),
+      title: const Text('ログアウト'),
+      content: const Text('本当にログアウトしてもよろしいですか？'),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(false),
-          child: const Text('취소'),
+          child: const Text('取り消し'),
         ),
         TextButton(
           onPressed: () => Navigator.of(context).pop(true),
-          child: const Text('로그아웃'),
+          child: const Text('ログアウト'),
         ),
       ],
     ),
